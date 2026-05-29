@@ -104,7 +104,7 @@ def apply(keywords, location, job_ids, max_pages, apply_type, email, password, r
     results = {"submitted": 0, "skipped": 0, "external": 0, "error": 0}
     applied = 0
 
-    for job in jobs[:limit]:
+    for job in jobs:  # iterate all found jobs, stop when limit submitted
         if applied >= limit:
             break
 
