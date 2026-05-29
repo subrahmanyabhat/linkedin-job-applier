@@ -36,6 +36,9 @@ if not _in_venv():
         print("[SETUP] Done. Restarting...\n")
     os.execv(str(_VENV_PYTHON), [str(_VENV_PYTHON)] + sys.argv)
 
+import click
+from dotenv import load_dotenv
+
 load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent))
