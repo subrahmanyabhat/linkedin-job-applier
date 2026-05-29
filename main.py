@@ -9,29 +9,32 @@ Usage:
 Requires Python 3.10+. Install Python: https://python.org/downloads
 """
 import sys
-if sys.version_info < (3, 10):
-    print(f"[ERROR] Python 3.10+ required. You have {sys.version}. Download: https://python.org/downloads")
-    sys.exit(1)
 import os
-import sys
 import subprocess
 from pathlib import Path
 
-try:
-    import playwright
-except ImportError:
-    print("[SETUP] Installing playwright...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "playwright"])
-    subprocess.check_call([sys.executable, "-m", "playwright", "install", "chromium"])
-    print("[SETUP] Done.")
+if sys.version_info < (3, 10):
+    print(f"[ERROR] Python 3.10+ required. You have {sys.version}.")
+    sys.exit(1)
 
-try:
-    import click
-    from dotenv import load_dotenv
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "click", "python-dotenv"])
-    import click
-    from dotenv import load_dotenv
+# Auto-setup venv if not already inside one
+_HERE = Path(__file__).parent
+_VENV = _HERE / ".venv"
+_VENV_PYTHON = _VENV / "bin" / "python"
+
+def _in_venv():
+    return sys.prefix != sys.base_prefix or "VIRTUAL_ENV" in os.environ
+
+if not _in_venv():
+    if not _VENV_PYTHON.exists():
+        print("[SETUP] Creating virtual environment...")
+        subprocess.check_call([sys.executable, "-m", "venv", str(_VENV)])
+        print("[SETUP] Installing dependencies...")
+        subprocess.check_call([str(_VENV_PYTHON), "-m", "pip", "install", "-q",
+                                "playwright", "click", "python-dotenv"])
+        subprocess.check_call([str(_VENV_PYTHON), "-m", "playwright", "install", "chromium"])
+        print("[SETUP] Done. Restarting...\n")
+    os.execv(str(_VENV_PYTHON), [str(_VENV_PYTHON)] + sys.argv)
 
 load_dotenv()
 
