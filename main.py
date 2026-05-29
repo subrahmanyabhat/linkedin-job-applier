@@ -40,10 +40,8 @@ from src import memory, tracker, browser, easy_apply, scraper
 
 
 def _get_credentials(email: str | None, password: str | None) -> tuple[str, str]:
-    email = email or os.getenv("LINKEDIN_EMAIL") or memory.get(
-        "email", "LinkedIn email")
-    password = password or os.getenv("LINKEDIN_PASSWORD") or memory.get(
-        "linkedin_password", "LinkedIn password")
+    email = email or os.getenv("LINKEDIN_EMAIL") or memory.get("email", "LinkedIn email") or ""
+    password = password or os.getenv("LINKEDIN_PASSWORD") or ""
     if email:
         memory.set_value("email", email)
     return email, password

@@ -22,8 +22,8 @@ def get_page(headless: bool = False) -> Page:
     return _page
 
 
-def login(page: Page, email: str, password: str) -> bool:
-    print("[LOGIN] Navigating to LinkedIn...")
+def login(page: Page, email: str = "", password: str = "") -> bool:
+    print("[LOGIN] Opening LinkedIn...")
     page.goto("https://www.linkedin.com/login")
     page.wait_for_timeout(1500)
 
@@ -31,20 +31,27 @@ def login(page: Page, email: str, password: str) -> bool:
         print("[LOGIN] Already logged in.")
         return True
 
-    page.fill("#username", email)
-    page.fill("#password", password)
-    page.click('[type="submit"]')
-    page.wait_for_timeout(3000)
+    if email and password:
+        page.fill("#username", email)
+        page.fill("#password", password)
+        page.click('[type="submit"]')
+        page.wait_for_timeout(3000)
+    else:
+        print("[LOGIN] Please log in manually in the browser window.")
+        input("Press Enter once you are logged in and see your LinkedIn feed...")
 
-    if "feed" in page.url or "jobs" in page.url or "checkpoint" in page.url:
-        if "checkpoint" in page.url:
-            print("[LOGIN] 2FA/checkpoint detected — please complete in browser window.")
-            input("Press Enter once logged in...")
+    if "checkpoint" in page.url:
+        print("[LOGIN] 2FA/checkpoint — complete in browser window.")
+        input("Press Enter once done...")
+
+    if "feed" in page.url or "jobs" in page.url or "mynetwork" in page.url:
         print("[LOGIN] Success.")
         return True
 
-    print("[LOGIN] Failed — check credentials.")
-    return False
+    # Give user one more chance
+    print("[LOGIN] Not on feed yet. Complete login in browser then press Enter.")
+    input("Press Enter when logged in...")
+    return True
 
 
 def close():
