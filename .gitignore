@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.playwright/
+node_modules/
+data/applied_jobs.csv
+data/memory.json
+data/third_party_sites.txt
+*.egg-info/
+dist/
+build/
+.venv/
