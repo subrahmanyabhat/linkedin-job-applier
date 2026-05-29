@@ -5,13 +5,33 @@ Usage:
     python main.py apply --keywords "Engineering Manager" --location "Bengaluru, India"
     python main.py apply --job-ids 1234567890,9876543210
     python main.py status
+
+Requires Python 3.10+. Install Python: https://python.org/downloads
 """
+import sys
+if sys.version_info < (3, 10):
+    print(f"[ERROR] Python 3.10+ required. You have {sys.version}. Download: https://python.org/downloads")
+    sys.exit(1)
 import os
 import sys
+import subprocess
 from pathlib import Path
 
-import click
-from dotenv import load_dotenv
+try:
+    import playwright
+except ImportError:
+    print("[SETUP] Installing playwright...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "playwright"])
+    subprocess.check_call([sys.executable, "-m", "playwright", "install", "chromium"])
+    print("[SETUP] Done.")
+
+try:
+    import click
+    from dotenv import load_dotenv
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "click", "python-dotenv"])
+    import click
+    from dotenv import load_dotenv
 
 load_dotenv()
 
