@@ -9,10 +9,18 @@ def _fill_step(page: Page, resume_path: str, mem: dict):
     """Fill all fields on current modal step."""
     modal = page.locator(".jobs-easy-apply-modal")
 
-    # Checkboxes — check all unchecked
+    # Checkboxes — check all unchecked (click label to avoid interception)
     for cb in modal.locator("input[type=checkbox]").all():
         if not cb.is_checked():
-            cb.click()
+            cb_id = cb.get_attribute("id") or ""
+            lbl = modal.locator(f'label[for="{cb_id}"]') if cb_id else None
+            try:
+                if lbl and lbl.count():
+                    lbl.first.click()
+                else:
+                    cb.click(force=True)
+            except Exception:
+                pass
 
     # Radio groups
     radio_groups: dict[str, list] = {}
